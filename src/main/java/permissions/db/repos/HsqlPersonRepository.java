@@ -154,10 +154,10 @@ List<Person> result = new ArrayList<Person>();
 		
 		List<Person> result = new ArrayList<Person>();
 		try {
-			select.setString(1, surname);
-			select.setInt(2, page.getCurrentPage()*page.getSize());
-			select.setInt(3, page.getSize());
-			ResultSet rs = select.executeQuery();
+			selectBySurname.setString(1, surname);
+			selectBySurname.setInt(2, page.getCurrentPage()*page.getSize());
+			selectBySurname.setInt(3, page.getSize());
+			ResultSet rs = selectBySurname.executeQuery();
 			while(rs.next()){
 				Person person = new Person();
 				person.setName(rs.getString("name"));
@@ -175,10 +175,10 @@ List<Person> result = new ArrayList<Person>();
 
 		List<Person> result = new ArrayList<Person>();
 		try {
-			select.setString(1, name);
-			select.setInt(2, page.getCurrentPage()*page.getSize());
-			select.setInt(3, page.getSize());
-			ResultSet rs = select.executeQuery();
+			selectByName.setString(1, name);
+			selectByName.setInt(2, page.getCurrentPage()*page.getSize());
+			selectByName.setInt(3, page.getSize());
+			ResultSet rs = selectByName.executeQuery();
 			while(rs.next()){
 				Person person = new Person();
 				person.setName(rs.getString("name"));
