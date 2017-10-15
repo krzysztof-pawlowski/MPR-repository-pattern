@@ -13,8 +13,8 @@ import java.util.Map;
 
 public abstract class AbstractMapper<T> {
 
-    protected Map<Long, T> loadedMap = new HashMap<>();
-    private Connection connection;
+    private Map<Long, T> loadedMap = new HashMap<>();
+    protected Connection connection;
 
     abstract protected String findStatement();
     abstract protected String findAllOnPageStatement();
@@ -22,7 +22,7 @@ public abstract class AbstractMapper<T> {
     abstract protected String updateStatement();
     abstract protected String removeStatement();
 
-    abstract protected T doLoad(Long id, ResultSet rs) throws SQLException;
+    abstract protected T doLoad(ResultSet rs) throws SQLException;
     abstract protected void parametrizeInsertStatement(PreparedStatement statement, T entity) throws SQLException;
     abstract protected void parametrizeUpdateStatement(PreparedStatement statement, T entity) throws SQLException;
 
@@ -111,7 +111,7 @@ public abstract class AbstractMapper<T> {
         if (loadedMap.containsKey(id)) {
             return loadedMap.get(id);
         }
-        T result = doLoad(id, rs);
+        T result = doLoad(rs);
         loadedMap.put(id, result);
         return result;
     }
