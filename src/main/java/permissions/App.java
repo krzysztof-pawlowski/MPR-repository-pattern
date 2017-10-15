@@ -26,7 +26,17 @@ public class App
 		try(Connection connection = DriverManager.getConnection(url)) 
 		{
 		
-	    	RepositoryCatalog catalogOf = new HsqlRepositoryCatalog(connection);  	
+	    	RepositoryCatalog catalogOf = new HsqlRepositoryCatalog(connection);
+
+	    	Person person1 = new Person();
+	    	person1.setName("Jan");
+			person1.setSurname("Kowalski");
+
+			Person person2 = new Person();
+			person2.setName("Wojciech");
+			person2.setSurname("Kowalski");
+
+	    	catalogOf.people().add(person1);
 	    	
 	    	catalogOf.people().withName("jan", new PagingInfo());
 	    	
@@ -47,8 +57,15 @@ public class App
 	        toUpdate.setName("Bolesław");
 	        toUpdate.setSurname("Prus");
 	        toUpdate.setId(2);
-	        
-	        mgr.update(toUpdate);
+
+			mgr.update(toUpdate);
+
+			allPersons = mgr.getAll();
+
+			for(Person p : allPersons){
+				mgr.deleteById(p.getId());
+			}
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
