@@ -10,27 +10,21 @@ import java.util.List;
 
 import permissions.db.PagingInfo;
 import permissions.db.PersonRepository;
+import permissions.db.mapper.PersonMapper;
 import permissions.domain.Person;
 
 public class HsqlPersonRepository implements PersonRepository {
 
     private Connection connection;
 
-    private String insertSql = "INSERT INTO person(name,surname) VALUES(?,?)";
-    private String selectSql = "SELECT * FROM person OFFSET ? LIMIT ?";
-    private String selectByIdSql = "SELECT * FROM person WHERE id=?";
+    private PersonMapper personMapper;
+
     private String selectBySurnameSql = "SELECT * FROM person WHERE Surname=? OFFSET ? LIMIT ?";
     private String selectByNameSql = "SELECT * FROM person WHERE Name=? OFFSET ? LImit ?";
-    private String deleteSql = "DELETE FROM person WHERE id=?";
-    private String updateSql = "UPDATE person SET (name,surname)=(?,?) WHERE id=?";
 
-    private PreparedStatement insert;
-    private PreparedStatement select;
-    private PreparedStatement selectById;
     private PreparedStatement selectBySurname;
     private PreparedStatement selectByName;
     private PreparedStatement delete;
-    private PreparedStatement update;
 
     private String createPersonTable = ""
         + "CREATE TABLE Person("
@@ -41,6 +35,8 @@ public class HsqlPersonRepository implements PersonRepository {
 
     public HsqlPersonRepository(Connection connection) {
         this.connection = connection;
+
+        this.personMapper = new PersonMapper(connection);
 
         try {
 
@@ -58,13 +54,8 @@ public class HsqlPersonRepository implements PersonRepository {
                 createTable.executeUpdate(createPersonTable);
             }
 
-            insert = connection.prepareStatement(insertSql);
-            select = connection.prepareStatement(selectSql);
-            selectById = connection.prepareStatement(selectByIdSql);
             selectByName = connection.prepareStatement(selectByNameSql);
             selectBySurname = connection.prepareStatement(selectBySurnameSql);
-            delete = connection.prepareStatement(deleteSql);
-            update = connection.prepareStatement(updateSql);
 
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -72,77 +63,26 @@ public class HsqlPersonRepository implements PersonRepository {
 
     }
 
+    @Override
     public Person withId(int id) {
-        Person result = null;
-        try {
-            selectById.setInt(1, id);
-            ResultSet rs = selectById.executeQuery();
-            while (rs.next()) {
-                Person person = new Person();
-                person.setName(rs.getString("name"));
-                person.setSurname(rs.getString("surname"));
-                person.setId(rs.getInt("id"));
-                result = person;
-                break;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return result;
+        return personMapper.find((long) id);
     }
 
     public List<Person> allOnPage(PagingInfo page) {
-        List<Person> result = new ArrayList<Person>();
-
-        try {
-            select.setInt(1, page.getCurrentPage() * page.getSize());
-            select.setInt(2, page.getSize());
-            ResultSet rs = select.executeQuery();
-            while (rs.next()) {
-                Person person = new Person();
-                person.setName(rs.getString("name"));
-                person.setSurname(rs.getString("surname"));
-                person.setId(rs.getInt("id"));
-                result.add(person);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return result;
+        return personMapper.findAllOnPage(page);
     }
 
     public void add(Person person) {
-        try {
-            insert.setString(1, person.getName());
-            insert.setString(2, person.getSurname());
-
-            insert.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        personMapper.add(person);
 
     }
 
     public void modify(Person p) {
-        try {
-            update.setString(1, p.getName());
-            update.setString(2, p.getSurname());
-            update.setInt(3, p.getId());
-            update.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
+        personMapper.update(p);
     }
 
     public void remove(Person p) {
-        try {
-            delete.setInt(1, p.getId());
-            delete.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
+        personMapper.remove((long) p.getId());
     }
 
     public List<Person> withSurname(String surname, PagingInfo page) {
