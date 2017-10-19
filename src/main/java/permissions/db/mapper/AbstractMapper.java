@@ -1,6 +1,7 @@
 package permissions.db.mapper;
 
 import permissions.db.PagingInfo;
+import permissions.domain.DomainObject;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class AbstractMapper<T> {
+public abstract class AbstractMapper<T extends DomainObject> {
 
     private Map<Long, T> loadedMap = new HashMap<>();
     protected Connection connection;
@@ -76,7 +77,7 @@ public abstract class AbstractMapper<T> {
 
             addStatement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
@@ -88,8 +89,10 @@ public abstract class AbstractMapper<T> {
             parametrizeUpdateStatement(updateStatement, entity);
 
             updateStatement.executeUpdate();
+
+            loadedMap.put((long) entity.getId(), entity);
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
@@ -101,8 +104,10 @@ public abstract class AbstractMapper<T> {
             removeStatement.setLong(1, id);
 
             removeStatement.executeUpdate();
+
+            loadedMap.remove(id);
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 

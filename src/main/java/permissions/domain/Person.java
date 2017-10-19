@@ -2,7 +2,7 @@ package permissions.domain;
 
 import java.util.List;
 
-public class Person {
+public class Person implements DomainObject {
 
 	private int id;
 	private String name;
