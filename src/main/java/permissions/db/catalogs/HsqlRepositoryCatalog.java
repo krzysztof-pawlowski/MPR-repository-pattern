@@ -8,14 +8,14 @@ import permissions.db.repos.HsqlPersonRepository;
 
 public class HsqlRepositoryCatalog implements RepositoryCatalog{
 
-	Connection connection;
-	
-	public HsqlRepositoryCatalog(Connection connection) {
-		this.connection = connection;
-	}
+    Connection connection;
+    
+    public HsqlRepositoryCatalog(Connection connection) {
+        this.connection = connection;
+    }
 
-	public PersonRepository people() {
-		return new HsqlPersonRepository(connection);
-	}
+    public PersonRepository people() {
+        return new HsqlPersonRepository(connection);
+    }
 
 }
