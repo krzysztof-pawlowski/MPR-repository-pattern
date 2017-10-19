@@ -4,9 +4,9 @@ import java.util.List;
 
 public interface Repository<TEntity> {
 
-	public TEntity withId(int id);
-	public List<TEntity> allOnPage(PagingInfo page);
-	public void add(TEntity entity);
-	public void modify(TEntity entity);
-	public void remove(TEntity entity);
+    TEntity withId(int id);
+    List<TEntity> allOnPage(PagingInfo page);
+    void add(TEntity entity);
+    void modify(TEntity entity);
+    void remove(TEntity entity);
 }

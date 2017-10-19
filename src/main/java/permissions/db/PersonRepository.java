@@ -1,11 +1,11 @@
 package permissions.db;
 
-import java.util.List;
-
 import permissions.domain.Person;
 
+import java.util.List;
+
 public interface PersonRepository extends Repository<Person> {
-	
-	public List<Person> withSurname(String surname, PagingInfo page);
-	public List<Person> withName(String name, PagingInfo page);
+    
+    List<Person> withSurname(String surname, PagingInfo page);
+    List<Person> withName(String name, PagingInfo page);
 }
